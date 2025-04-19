@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-lg mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
+    <div class="flex justify-between items-start">
+      <div>
+        <h2 class="text-xl font-semibold">Token Goes Here*</h2>
+      </div>
+      <button class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="mt-4">
+      <button 
+        id="assignBtn" 
+        class="bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
+      >
+        Assign
+      </button>
+    </div>
+    
+    <div id="assignModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-80">
+        <h2 class="text-lg font-semibold mb-4">Assign Task</h2>
+        <label class="block text-sm font-medium mb-1">Name</label>
+        <input id="assignName" type="text" class="w-full p-2 border rounded mb-3" placeholder="Enter name">
+    
+        <label class="block text-sm font-medium mb-1">ID</label>
+        <input id="assignID" type="text" class="w-full p-2 border rounded mb-4" placeholder="Enter ID">
+    
+        <div class="flex justify-end space-x-2">
+          <button id="cancelAssign" class="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button id="submitAssign" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Assign</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold">Description</h3>
+      <textarea class="w-full mt-2 p-2 border rounded" placeholder="Add a more detailed description..."></textarea>
+    </div>
+
+    <div class="mt-6">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-semibold">Checklist</h3>
+        <span id="statusLabel" class="text-sm font-semibold px-2 py-1 rounded bg-yellow-500 text-white">In Progress</span>
+      </div>
+
+      <div class="flex justify-between items-center mt-2">
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div id="progressBar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <button id="hideCompletedBtn" class="text-gray-500 hover:text-gray-700 ml-2">Hide completed items</button>
+      </div>
+
+      <ul class="mt-4 space-y-2" id="checklist">
+        <!-- Items will be added dynamically -->
+      </ul>
+      
+      <div class="mt-4 flex justify-end">
+        <button 
+          id="addItemBtn" 
+          class="bg-green-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-green-600 transition"
+        >
+          Add Item
+        </button>
+      </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-80">
+        <h2 class="text-lg font-semibold mb-4">Add Checklist Item</h2>
+        <label class="block text-sm font-medium mb-1">Item Text</label>
+        <input id="itemText" type="text" class="w-full p-2 border rounded mb-4" placeholder="Enter item text">
+        <div class="flex justify-end space-x-2">
+          <button id="cancelAddItem" class="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button id="submitAddItem" class="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Add Item</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold">Notes</h3>
+      <textarea class="w-full mt-2 p-2 border rounded" placeholder="Add a more detailed description..."></textarea>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold">Actions</h3>
+      <ul class="space-y-2 mt-4">
+        <li class="flex justify-between items-center hover:bg-gray-50 p-2 rounded">
+          <span>Add Comment</span>
+          <button class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </li>
+        <li class="flex justify-between items-center hover:bg-gray-50 p-2 rounded">
+          <span>View Sender Info</span>
+          <button class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-info-circle"></i>
+          </button>
+        </li>
+      </ul>
+      <div class="mt-4 flex justify-center">
+        <button 
+          id="finishBtn"
+          class="bg-green-500 text-white font-semibold px-6 py-2 rounded hover:bg-green-600 transition"
+        >
+          Finish 
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Assignment Modal Logic
+    const assignBtn = document.getElementById('assignBtn');
+    const assignModal = document.getElementById('assignModal');
+    const cancelAssign = document.getElementById('cancelAssign');
+    const submitAssign = document.getElementById('submitAssign');
+
+    assignBtn.addEventListener('click', () => {
+      assignModal.classList.remove('hidden');
+    });
+
+    cancelAssign.addEventListener('click', () => {
+      assignModal.classList.add('hidden');
+    });
+
+    submitAssign.addEventListener('click', () => {
+      const name = document.getElementById('assignName').value;
+      const id = document.getElementById('assignID').value;
+
+      if (name && id) {
+        alert(`Assigned to ${name} (ID: ${id})`);
+        assignModal.classList.add('hidden');
+      } else {
+        alert('Please enter both name and ID.');
+      }
+    });
+
+    // Checklist Functionality
+    const addItemBtn = document.getElementById('addItemBtn');
+    const addItemModal = document.getElementById('addItemModal');
+    const cancelAddItem = document.getElementById('cancelAddItem');
+    const submitAddItem = document.getElementById('submitAddItem');
+    const itemTextInput = document.getElementById('itemText');
+    const checklistUl = document.getElementById('checklist');
+    const progressBar = document.getElementById('progressBar');
+    const statusLabel = document.getElementById('statusLabel');
+    const hideButton = document.getElementById('hideCompletedBtn');
+
+    let hideCompleted = false;
+
+    // Add Item Modal Handling
+    addItemBtn.addEventListener('click', () => {
+      addItemModal.classList.remove('hidden');
+    });
+
+    cancelAddItem.addEventListener('click', () => {
+      addItemModal.classList.add('hidden');
+      itemTextInput.value = '';
+    });
+
+    submitAddItem.addEventListener('click', () => {
+      const text = itemTextInput.value.trim();
+      if (text) {
+        const li = document.createElement('li');
+        li.className = 'checklist-li flex items-center space-x-2';
+        li.innerHTML = `
+          <input type="checkbox" class="form-checkbox h-4 w-4 text-blue-600 checklist-item">
+          <span>${text}</span>
+        `;
+        checklistUl.appendChild(li);
+        itemTextInput.value = '';
+        addItemModal.classList.add('hidden');
+        updateProgress();
+      }
+    });
+
+    // Progress Update Function
+    function updateProgress() {
+      const checklistItems = document.querySelectorAll('.checklist-item');
+      const checkedItems = Array.from(checklistItems).filter(item => item.checked);
+      const progress = checklistItems.length > 0 ? (checkedItems.length / checklistItems.length) * 100 : 0;
+      progressBar.style.width = `${progress}%`;
+
+      const isComplete = progress === 100;
+      statusLabel.textContent = isComplete ? "Complete" : "In Progress";
+      statusLabel.className = `text-sm font-semibold px-2 py-1 rounded ${isComplete ? "bg-green-500" : "bg-yellow-500"} text-white`;
+
+      // Update item visibility
+      checklistItems.forEach(checkbox => {
+        const li = checkbox.closest('li');
+        if (hideCompleted) {
+          li.style.display = checkbox.checked ? 'none' : 'flex';
+        } else {
+          li.style.display = 'flex';
+        }
+      });
+    }
+
+    // Event Delegation for Checklist Changes
+    checklistUl.addEventListener('change', (event) => {
+      if (event.target.classList.contains('checklist-item')) {
+        updateProgress();
+      }
+    });
+
+    // Hide Completed Items Toggle
+    hideButton.addEventListener('click', () => {
+      hideCompleted = !hideCompleted;
+      hideButton.textContent = hideCompleted ? "Show completed items" : "Hide completed items";
+      updateProgress();
+    });
+    // Add Finish Button functionality
+    const finishBtn = document.getElementById('finishBtn');
+    
+    finishBtn.addEventListener('click', () => {
+      const checklistItems = document.querySelectorAll('.checklist-item');
+      const allCompleted = Array.from(checklistItems).every(item => item.checked);
+      
+      if (allCompleted) {
+        showAlert('Task completed successfully!', 'green');
+      } else {
+        showAlert('Please complete all checklist items before finishing!', 'red');
+      }
+    });
+
+    function showAlert(message, color) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-${color}--500 text-white px-4 py-2 rounded-lg shadow-lg`;
+      alertDiv.textContent = message;
+      
+      document.body.appendChild(alertDiv);
+      
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+
+    // Initial progress update
+    updateProgress();
+  </script>
+</body>
+</html>
