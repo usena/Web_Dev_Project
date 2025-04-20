@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { auth, provider, db } from "../firebase/firebase";
 import { signInWithPopup } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { auth, provider } from '../firebase/firebase';
 
 export default function AuthForm({ onAuthSuccess }) {
   const [mode, setMode] = useState('login');
@@ -22,19 +21,8 @@ export default function AuthForm({ onAuthSuccess }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // Save extra info to Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        email,
-        fullName,
-        id,
-        field,
-        emailType
-      });
-
-      onAuthSuccess(user);
+      alert(`Signed in as ${user.email}`);
+      onAuthSuccess(user); // Update parent App.jsx
     } catch (err) {
       console.error(err);
       alert('Failed to authenticate.');

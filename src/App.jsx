@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './App.css';
+import { auth, provider } from './firebase/firebase';
+import { signInWithPopup } from 'firebase/auth';
 import AuthForm from './components/AuthForm';
 import Dashboard from './components/Dashboard';
 
