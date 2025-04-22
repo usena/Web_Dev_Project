@@ -1,18 +1,10 @@
-import { useState } from 'react';
-import './App.css';
-import { auth, provider } from './firebase/firebase';
-import { signInWithPopup } from 'firebase/auth';
-import AuthForm from './components/AuthForm';
-import Dashboard from './components/Dashboard';
+import React from 'react';
+import TaskCard from './TaskCard';
 
-function App() {
-  const [user, setUser] = useState(null);
-
+export default function App() {
   return (
-    <div className="app">
-      {user ? <Dashboard user={user} /> : <AuthForm onAuthSuccess={setUser} />}
+    <div>
+      <TaskCard />
     </div>
   );
 }
-
-export default App;
