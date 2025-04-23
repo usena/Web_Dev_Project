@@ -20,7 +20,7 @@ export default function AuthForm({ onAuthSuccess }) {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       alert(`Signed in as ${user.email}`);
-      onAuthSuccess(user);
+      onAuthSuccess(user, false); // Not internal
     } catch (err) {
       console.error(err);
       alert('Failed to authenticate with Google.');
@@ -34,7 +34,7 @@ export default function AuthForm({ onAuthSuccess }) {
       uid: 'internal123',
     };
     alert(`Signed in as ${internalUser.email}`);
-    onAuthSuccess(internalUser);
+    onAuthSuccess(internalUser, true); // Internal user
   };
 
   return (

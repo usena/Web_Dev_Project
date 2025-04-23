@@ -5,6 +5,51 @@
   text-align: center;
 }
 
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #e5f4f1;
+  margin: 0;
+  padding: 0;
+  color: #003f2d;
+}
+
+.container {
+  max-width: 400px;
+  margin: 5rem auto;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 63, 45, 0.1);}
+
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  button {
+    background-color: #007e61;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .switch {
+    text-align: center;
+    margin-top: 1rem;
+    color: #007e61;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  button:hover {
+    background-color: #005b47;
+  }
+
 .logo {
   height: 6em;
   padding: 1.5em;
