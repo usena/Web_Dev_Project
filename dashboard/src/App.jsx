@@ -6,11 +6,10 @@ import axios from "axios";
 import { useEffect, useState } from 'react';
 
 export default function App(){
-  const [count, setCount] = useState(0);
 
   const fetchAPI = async () => {
     const response = await axios.get("http://localhost:3000/api");
-    console.log(response.data.fruits);
+    console.log(response.data);
   };
 
   useEffect(() => {

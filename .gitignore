@@ -24,6 +24,8 @@ server/dist/
 dashboard/.env
 server/.env
 
+server/firebase-key.json
+
 # System files
 .DS_Store
 
