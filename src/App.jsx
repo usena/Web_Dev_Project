@@ -28,4 +28,19 @@ function App() {
   );
 }
 
+useEffect(() => {
+  const checkSession = async () => {
+    const res = await fetch("http://localhost:5173/api/checkSession", {
+      credentials: "include"
+    });
+    if (res.ok) {
+      const user = await res.json();
+      onAuthSuccess(user, false); // e.g., sets state to show "logged in"
+    }
+  };
+
+  checkSession();
+}, []);
+
+
 export default App;

@@ -19,24 +19,27 @@ export default function AuthForm({ onAuthSuccess }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+  
+      const idToken = await user.getIdToken();
+  
+      // Send to backend to create session
+      await fetch("http://localhost:5173/api/sessionLogin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include", // IMPORTANT: allows cookies to be set
+        body: JSON.stringify({ idToken })
+      });
+  
       alert(`Signed in as ${user.email}`);
-      onAuthSuccess(user, false); // Not internal
+      onAuthSuccess(user, false);
     } catch (err) {
       console.error(err);
-      alert('Failed to authenticate with Google.');
+      alert("Failed to authenticate with Google.");
     }
   };
-
-  const handleInternalSignIn = () => {
-    const internalUser = {
-      email: 'internal@company.com',
-      displayName: 'Internal User',
-      uid: 'internal123',
-    };
-    alert(`Signed in as ${internalUser.email}`);
-    onAuthSuccess(internalUser, true); // Internal user
-  };
-
+  
   return (
     <div className="container">
       <h2>{mode === 'login' ? 'Login' : 'Sign Up'}</h2>

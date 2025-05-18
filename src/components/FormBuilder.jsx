@@ -23,7 +23,7 @@ const FormBuilder = () => {
     try {
       await addDoc(collection(db, 'responses'), {
         ...formData,
-        timestamp: serverTimestamp.now()
+        timestamp: serverTimestamp()
       });
 
       alert('Submitted successfully!');
