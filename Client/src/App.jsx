@@ -1,11 +1,26 @@
+import './App.css'
+import { Routes, Route } from "react-router";
+import { Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+
+import Home from "./components/home.jsx";
+
 function App() {
   return (
     <>
-      <h1 className="text-red-500 font-bold underline">
-        HelpDesk System
-      </h1>
+      <Toaster />
+      <Routes>
+        {/* All paths lead to Home for now */}
+        <Route path="/" element={<Home />} />
+        
+        {/* Temporarily disabled auth routes */}
+        {/* <Route path="/signup" element={<Signup/>} /> */}
+        {/* <Route path="/signin" element={<Login />} /> */}
+        {/* <Route path="/profile" element={<Profile/>}/> */}
 
-      <button className="btn btn-primary">Primary</button>
+        {/* Redirect everything else to home */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </>
   );
 }

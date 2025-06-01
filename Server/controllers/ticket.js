@@ -148,7 +148,6 @@ export const getSpecificTicketClient = async (req, res) => {
                 title: ticket.ticketTitle,
                 category: ticket.ticketCategory,
                 description: ticket.ticketDesc,
-                status: ticket.ticketStatus, // Include status in response
                 createdAt: ticket.createdAt
             }
         };
