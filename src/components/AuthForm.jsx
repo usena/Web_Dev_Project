@@ -39,6 +39,17 @@ export default function AuthForm({ onAuthSuccess }) {
       alert("Failed to authenticate with Google.");
     }
   };
+
+  const handleInternalSignIn = () => {
+    const internalUser = {
+      email: 'internal@company.com',
+      displayName: 'Internal User',
+      uid: 'internal123',
+    };
+    alert(`Signed in as ${internalUser.email}`);
+    onAuthSuccess(internalUser, true); // Call the prop function
+  };
+  
   
   return (
     <div className="container">

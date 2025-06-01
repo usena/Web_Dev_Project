@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import AuthForm from './components/AuthForm';
 import FormBuilder from './components/FormBuilder';
@@ -13,13 +13,31 @@ function App() {
     setIsInternal(internal);
   };
 
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("http://localhost:5173/api/checkSession", {
+          credentials: "include"
+        });
+        if (res.ok) {
+          const user = await res.json();
+          handleAuthSuccess(user, false); // previously: onAuthSuccess (which doesn't exist)
+        }
+      } catch (err) {
+        console.error("Session check failed", err);
+      }
+    };
+
+    checkSession();
+  }, []);
+
   return (
     <div className="app">
       {user ? (
         isInternal ? (
-          <TaskCard /> 
+          <TaskCard />
         ) : (
-          <FormBuilder user={user} /> 
+          <FormBuilder user={user} />
         )
       ) : (
         <AuthForm onAuthSuccess={handleAuthSuccess} />
@@ -27,20 +45,5 @@ function App() {
     </div>
   );
 }
-
-useEffect(() => {
-  const checkSession = async () => {
-    const res = await fetch("http://localhost:5173/api/checkSession", {
-      credentials: "include"
-    });
-    if (res.ok) {
-      const user = await res.json();
-      onAuthSuccess(user, false); // e.g., sets state to show "logged in"
-    }
-  };
-
-  checkSession();
-}, []);
-
 
 export default App;
