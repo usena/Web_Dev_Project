@@ -13,9 +13,9 @@ const ticketSchema = mongoose.Schema({
         enum: ["technical", "complain", "inquiries", "booking", "other"]
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false // Change from true
     },
     ticketDesc: {
         type: String,
