@@ -79,6 +79,7 @@ export const submitResponseStaff = async (req, res) => {
             }
             updateData.ticketResponse = ticketResponse;
             updateData.ticketStatus = "finished";
+            updateData.ticketDone = new Date();
         }
 
         if (Object.keys(updateData).length === 0) {

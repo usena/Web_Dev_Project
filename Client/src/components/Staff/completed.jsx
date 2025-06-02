@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-const Tickets = () => {
+const Completed = () => {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState('all');
@@ -35,7 +35,7 @@ const Tickets = () => {
         try {
             const response = await axios.get('/service/ticket/get_all_tickets', {
                 params: {
-                    filter: 'not-finished',
+                    filter: 'finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
                 }
             });
@@ -107,14 +107,14 @@ const Tickets = () => {
                     <span className="loading loading-spinner loading-lg"></span>
                 </div>
             ) : processedTickets.length === 0 ? (
-                <div className="alert alert-info">No tickets found</div>
+                <div className="text-center py-4 text-gray-600">No tickets found</div>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="table table-zebra">
                         <thead>
                             <tr>
                                 <th>Title</th>
-                                <th>Category</th>
+                                <th>Reply</th>
                                 <th>Deadline</th>
                                 <th>Created</th>
                             </tr>
@@ -123,7 +123,7 @@ const Tickets = () => {
                             {processedTickets.map(ticket => (
                                 <tr key={ticket._id}>
                                     <td>{ticket.ticketTitle}</td>
-                                    <td>{ticket.ticketCategory}</td>
+                                    <td>{new Date(ticket.ticketDone).toLocaleDateString()}</td>
                                     <td>{new Date(ticket.ticketDeadline).toLocaleDateString()}</td>
                                     <td>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                                 </tr>
@@ -136,4 +136,4 @@ const Tickets = () => {
     );
 };
 
-export default Tickets;
+export default Completed;

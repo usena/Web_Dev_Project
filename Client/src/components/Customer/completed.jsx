@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-const Tickets = () => {
+const Completed = () => {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState('all');
@@ -20,10 +20,8 @@ const Tickets = () => {
         if (sort) {
             result = [...result];
             switch (sort) {
-                case "most urgent": return result.sort((a, b) => new Date(a.ticketDeadline) - new Date(b.ticketDeadline));
-                case "least urgent": return result.sort((a, b) => new Date(b.ticketDeadline) - new Date(a.ticketDeadline));
-                case "latest": return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                case "oldest": return result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                case "latest": return result.sort((a, b) => new Date(b.ticketDone) - new Date(a.ticketDone));
+                case "oldest": return result.sort((a, b) => new Date(a.ticketDone) - new Date(b.ticketDone));
                 default: return result;
             }
         }
@@ -35,7 +33,7 @@ const Tickets = () => {
         try {
             const response = await axios.get('/service/ticket/get_all_tickets', {
                 params: {
-                    filter: 'not-finished',
+                    filter: 'finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
                 }
             });
@@ -94,8 +92,6 @@ const Tickets = () => {
                     className="select select-bordered"
                 >
                     <option value="">Default Sort</option>
-                    <option value="most urgent">Most Urgent</option>
-                    <option value="least urgent">Least Urgent</option>
                     <option value="latest">Latest</option>
                     <option value="oldest">Oldest</option>
                 </select>
@@ -114,6 +110,7 @@ const Tickets = () => {
                         <thead>
                             <tr>
                                 <th>Title</th>
+                                <th>Reply</th>
                                 <th>Created</th>
                             </tr>
                         </thead>
@@ -121,6 +118,7 @@ const Tickets = () => {
                             {processedTickets.map(ticket => (
                                 <tr key={ticket._id}>
                                     <td>{ticket.ticketTitle}</td>
+                                    <td>{new Date(ticket.ticketDone).toLocaleDateString()}</td>
                                     <td>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                                 </tr>
                             ))}
@@ -132,4 +130,4 @@ const Tickets = () => {
     );
 };
 
-export default Tickets;
+export default Completed;

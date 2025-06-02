@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-//import Tickets from "./Tickets";
-import Completed from "../completed";
+import Tickets from "./tickets";
+import Completed from "./completed";
 import {
     UserCircle,
     LayoutDashboard,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 const Sidebar = () => {
-    const [activePage, setActivePage] = useState("dashboard");
+    const [activePage, setActivePage] = useState("completed");
 
     return (
         <div className="drawer lg:drawer-open">
@@ -20,8 +20,8 @@ const Sidebar = () => {
                 </label>
                 <div className="flex w-full h-full gap-8 pt-2 pb-4 px6">
                     <div className="flex flex-col gap-3 flex-3/4 rounded-md p-4">
-                        {activePage === "dashboard" && <Tickets />}
                         {activePage === "completed" && <Completed />}
+                        {activePage === "dashboard" && <Tickets />}
                     </div>
                 </div>
             </div>
@@ -30,12 +30,12 @@ const Sidebar = () => {
                 <ul className="menu bg-green-200 text-base-content min-h-full w-80 p-4 pt-26">
                 {/* Sidebar content here */}
                     <li><button 
-                        className={activePage === "dashboard" ? "active" : ""} 
-                        onClick={() => setActivePage("dashboard")}>Dashboard
-                    </button></li>
-                    <li><button 
                         className={activePage === "completed" ? "active" : ""} 
                         onClick={() => setActivePage("completed")}>Completed
+                    </button></li>
+                    <li><button 
+                        className={activePage === "dashboard" ? "active" : ""} 
+                        onClick={() => setActivePage("dashboard")}>Dashboard
                     </button></li>
                 </ul>
             </div>

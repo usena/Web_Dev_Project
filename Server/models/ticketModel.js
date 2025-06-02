@@ -39,6 +39,10 @@ const ticketSchema = mongoose.Schema({
         type: String,
         maxLength: 1000,
         default: ""
+    },
+    ticketDone: {
+        type: Date,
+        default: null
     }
 }, {
     timestamps: true
