@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 
-export default function TaskCard() {
+export default function TaskCard({ user }) {
   const [assignModal, setAssignModal] = useState(false);
   const [assignName, setAssignName] = useState('');
   const [assignID, setAssignID] = useState('');
@@ -10,10 +10,37 @@ export default function TaskCard() {
   const [addItemModal, setAddItemModal] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [alert, setAlert] = useState(null);
-
   const [commentModal, setCommentModal] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [userInfo, setUserInfo] = useState(null);
+  const [showSenderInfo, setShowSenderInfo] = useState(false);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const res = await fetch('http://localhost:5173/api/user/me', {
+          headers: {
+            'x-auth-token': token,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUserInfo(data);
+        } else {
+          console.error('Failed to fetch user info');
+        }
+      } catch (err) {
+        console.error('Error fetching user info:', err);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   const updateProgress = () => {
     const total = checklist.length;
@@ -64,9 +91,7 @@ export default function TaskCard() {
 
   return (
     <div className="page">
-      {alert && (
-        <div className={`alert ${alert.color}`}>{alert.message}</div>
-      )}
+      {alert && <div className={`alert ${alert.color}`}>{alert.message}</div>}
 
       <div className="card">
         <div className="header">
@@ -114,11 +139,7 @@ export default function TaskCard() {
             {checklist.map((item, index) => (
               hideCompleted && item.checked ? null : (
                 <li key={index} className="checklist-item">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => handleCheckboxChange(index)}
-                  />
+                  <input type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(index)} />
                   <span>{item.text}</span>
                 </li>
               )
@@ -153,21 +174,33 @@ export default function TaskCard() {
               <span>Add Comment</span>
               <i className="fas fa-arrow-right"></i>
             </li>
-            <li>
+            <li onClick={() => setShowSenderInfo(!showSenderInfo)}>
               <span>View Sender Info</span>
               <i className="fas fa-info-circle"></i>
             </li>
           </ul>
-          <button onClick={() => {
-            if (allCompleted) {
-              showAlert('Task completed successfully!', 'green');
-            } else {
-              showAlert('Please complete all checklist items before finishing!', 'red');
-            }
-          }} className="btn green center">Finish</button>
+          <button
+            onClick={() => {
+              if (allCompleted) {
+                showAlert('Task completed successfully!', 'green');
+              } else {
+                showAlert('Please complete all checklist items before finishing!', 'red');
+              }
+            }}
+            className="btn green center"
+          >
+            Finish
+          </button>
         </div>
 
-        {/* Comment List */}
+        {showSenderInfo && userInfo && (
+          <div className="section">
+            <h3>Sender Info</h3>
+            <p><strong>Username:</strong> {userInfo.username}</p>
+            <p><strong>Email:</strong> {userInfo.email}</p>
+          </div>
+        )}
+
         {comments.length > 0 && (
           <div className="section">
             <h3>Comments</h3>
@@ -179,7 +212,6 @@ export default function TaskCard() {
           </div>
         )}
 
-        {/* Comment Modal */}
         {commentModal && (
           <div className="modal-overlay">
             <div className="modal">
