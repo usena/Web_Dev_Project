@@ -20,8 +20,6 @@ const Tickets = () => {
         if (sort) {
             result = [...result];
             switch (sort) {
-                case "most urgent": return result.sort((a, b) => new Date(a.ticketDeadline) - new Date(b.ticketDeadline));
-                case "least urgent": return result.sort((a, b) => new Date(b.ticketDeadline) - new Date(a.ticketDeadline));
                 case "latest": return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 case "oldest": return result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
                 default: return result;
@@ -33,7 +31,7 @@ const Tickets = () => {
     const fetchTickets = async (selectedCategory = category) => {
         setLoading(true);
         try {
-            const response = await axios.get('/service/ticket/get_all_tickets', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/service/ticket/get_all_tickets`, {
                 params: {
                     filter: 'not-finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
@@ -94,8 +92,6 @@ const Tickets = () => {
                     className="select select-bordered"
                 >
                     <option value="">Default Sort</option>
-                    <option value="most urgent">Most Urgent</option>
-                    <option value="least urgent">Least Urgent</option>
                     <option value="latest">Latest</option>
                     <option value="oldest">Oldest</option>
                 </select>

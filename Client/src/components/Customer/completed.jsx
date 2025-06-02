@@ -20,8 +20,10 @@ const Completed = () => {
         if (sort) {
             result = [...result];
             switch (sort) {
-                case "latest": return result.sort((a, b) => new Date(b.ticketDone) - new Date(a.ticketDone));
-                case "oldest": return result.sort((a, b) => new Date(a.ticketDone) - new Date(b.ticketDone));
+                case "latest reply": return result.sort((a, b) => new Date(b.ticketDone) - new Date(a.ticketDone));
+                case "oldest reply": return result.sort((a, b) => new Date(a.ticketDone) - new Date(b.ticketDone));
+                case "latest": return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                case "oldest": return result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
                 default: return result;
             }
         }
@@ -31,7 +33,7 @@ const Completed = () => {
     const fetchTickets = async (selectedCategory = category) => {
         setLoading(true);
         try {
-            const response = await axios.get('/service/ticket/get_all_tickets', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/service/ticket/get_all_tickets`, {
                 params: {
                     filter: 'finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
@@ -92,6 +94,8 @@ const Completed = () => {
                     className="select select-bordered"
                 >
                     <option value="">Default Sort</option>
+                    <option value="latest reply">Latest Reply</option>
+                    <option value="oldest reply">Oldest Reply</option>
                     <option value="latest">Latest</option>
                     <option value="oldest">Oldest</option>
                 </select>
