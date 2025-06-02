@@ -99,7 +99,20 @@ export const submitResponseStaff = async (req, res) => {
 
 export const getAllTicketsStaff = async (req, res) => {
     try {
-        const tickets = await TicketModel.find();
+        const {filter, category} = req.query;
+        let query = {};
+
+        if (filter === 'finished') {
+            query.ticketStatus = 'finished';
+        } else {
+            query.ticketStatus = {$ne: 'finished'}
+        }
+
+        if (category && category !== 'all') {
+            query.ticketCategory = category;
+        }
+
+        const tickets = await TicketModel.find(query);
         res.status(200).json(tickets);
     } catch (error) {
         return res.status(500).json({ message: error.message });

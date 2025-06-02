@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-const Tickets = () => {
+const Completed = () => {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState('all');
@@ -35,7 +35,7 @@ const Tickets = () => {
         try {
             const response = await axios.get('/service/ticket/get_all_tickets', {
                 params: {
-                    filter: 'not-finished',
+                    filter: 'finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
                 }
             });
@@ -136,4 +136,4 @@ const Tickets = () => {
     );
 };
 
-export default Tickets;
+export default Completed;

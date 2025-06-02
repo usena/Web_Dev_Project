@@ -10,7 +10,7 @@ const ticketSchema = mongoose.Schema({
         type: String,
         required: true,
         default: "technical",
-        enum: ["technical", "complain", "inquiries", "booking", "other"]
+        enum: ["technical", "complaints", "inquiries", "booking", 'refund', "other"]
     },
     createdBy: {
     type: mongoose.Schema.Types.ObjectId,

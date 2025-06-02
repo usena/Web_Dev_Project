@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Tickets from "./ticket";
+import Completed from "./completed";
 import {
     UserCircle,
     LayoutDashboard,
@@ -20,7 +21,7 @@ const Sidebar = () => {
                 <div className="flex w-full h-full gap-8 pt-2 pb-4 px6">
                     <div className="flex flex-col gap-3 flex-3/4 rounded-md p-4">
                         {activePage === "dashboard" && <Tickets />}
-                        {/**{activePage === "completed" && <Completed />} */}
+                        {activePage === "finished" && <Completed />}
                     </div>
                 </div>
             </div>
@@ -32,10 +33,10 @@ const Sidebar = () => {
                         className={activePage === "dashboard" ? "active" : ""} 
                         onClick={() => setActivePage("dashboard")}>Dashboard
                     </button></li>
-                    {/**<li><button 
-                        className={activePage === "completed" ? "active" : ""} 
-                        onClick={() => setActivePage("completed")}>Completed
-                    </button></li> */}
+                    <li><button 
+                        className={activePage === "finished" ? "active" : ""} 
+                        onClick={() => setActivePage("finished")}>Completed
+                    </button></li>
                 </ul>
             </div>
         </div>
