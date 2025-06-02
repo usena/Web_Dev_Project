@@ -25,4 +25,12 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/me', auth, async (req, res) => {
+    try {
+      const user = await User.findById(req.user).select('-password');
+      res.json(user);
+    } catch (err) {
+      res.status(500).send('Server error');
+    }
+  });
 export default router;

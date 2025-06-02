@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
+import { useNavigate } from 'react-router-dom';
+import jwt_decode from 'jwt-decode';
 
 export default function TaskCard() {
   const [assignModal, setAssignModal] = useState(false);
@@ -10,6 +12,30 @@ export default function TaskCard() {
   const [addItemModal, setAddItemModal] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const decoded = jwt_decode(token);
+      setUserInfo(decoded);
+    } catch (err) {
+      console.error('Invalid token');
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   const updateProgress = () => {
     const total = checklist.length;
@@ -57,8 +83,8 @@ export default function TaskCard() {
 
       <div className="card">
         <div className="header">
-          <h2>Token Goes Here*</h2>
-          <button className="close-btn">&times;</button>
+          <h2>{userInfo ? `Welcome, ${userInfo.username}` : 'Loading...'}</h2>
+          <button className="btn red" onClick={handleLogout}>Logout</button>
         </div>
 
         <div className="section">

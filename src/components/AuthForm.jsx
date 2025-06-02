@@ -1,35 +1,51 @@
 import { useState } from 'react';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
 export default function AuthForm({ onAuthSuccess }) {
   const [mode, setMode] = useState('login');
   const [emailType, setEmailType] = useState('personal');
+  const [personalEmail, setPersonalEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [id, setId] = useState('');
   const [field, setField] = useState('');
 
   const generateEmail = () => {
     const [firstName] = fullName.trim().split(' ');
+    if (!firstName || !id || !field) return '';
     return `${firstName}.${id}.${field}@gmail.com`.toLowerCase();
   };
 
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
+
+    if (emailType === 'personal' && !personalEmail) {
+      alert('Please enter your personal email');
+      return;
+    }
+    if (emailType === 'work' && !generateEmail()) {
+      alert('Please fill all fields for work email');
+      return;
+    }
+
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-  
+
       const idToken = await user.getIdToken();
-  
+
       // Send to backend to create session
       await fetch("http://localhost:5173/api/sessionLogin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        credentials: "include", // IMPORTANT: allows cookies to be set
+        credentials: "include",
         body: JSON.stringify({ idToken })
       });
-  
+
       alert(`Signed in as ${user.email}`);
       onAuthSuccess(user, false);
     } catch (err) {
@@ -45,10 +61,9 @@ export default function AuthForm({ onAuthSuccess }) {
       uid: 'internal123',
     };
     alert(`Signed in as ${internalUser.email}`);
-    onAuthSuccess(internalUser, true); // Call the prop function
+    onAuthSuccess(internalUser, true);
   };
-  
-  
+
   return (
     <div className="container">
       <h2>{mode === 'login' ? 'Login' : 'Sign Up'}</h2>
@@ -59,7 +74,13 @@ export default function AuthForm({ onAuthSuccess }) {
         </select>
 
         {emailType === 'personal' ? (
-          <input type="email" name="email" placeholder="Enter your email" />
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={personalEmail}
+            onChange={e => setPersonalEmail(e.target.value)}
+          />
         ) : (
           <>
             <input
