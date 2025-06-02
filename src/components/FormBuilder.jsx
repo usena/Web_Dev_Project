@@ -1,6 +1,3 @@
-import React, { useState } from 'react';
-import { db } from '../firebase/firebase'; // adjust path if needed
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const FormBuilder = () => {
   const [formData, setFormData] = useState({

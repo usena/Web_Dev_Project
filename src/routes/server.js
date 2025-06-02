@@ -1,4 +1,4 @@
-import { handleSessionLogin } from './session.js';
+import { handleSessionLogin } from '../routes/session.js';
 
 if (pathname === '/api/sessionLogin' && req.method === 'POST') {
   let body = '';

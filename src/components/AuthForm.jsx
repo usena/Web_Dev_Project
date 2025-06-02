@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../firebase/firebase';
 
 export default function AuthForm({ onAuthSuccess }) {
   const [mode, setMode] = useState('login');

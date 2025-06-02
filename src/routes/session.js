@@ -1,4 +1,4 @@
-import { adminAuth } from './firebaseAdmin.js';
+import { adminAuth } from '../.gitignore/firebaseAdmin.js';
 import { serialize, parse as parseCookies } from 'cookie';
 
 export async function handleSessionLogin(req, res, body) {
