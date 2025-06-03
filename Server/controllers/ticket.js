@@ -129,18 +129,19 @@ export const getSpecificTicketStaff = async (req, res) => {
             return res.status(404).json({message: "Ticket not found."});
         }
 
-        res.status(200).json({
+        const responseData = {
             message: "Successfully retrieved ticket information!",
             ticketData: {
                 title: ticket.ticketTitle,
                 category: ticket.ticketCategory,
+                createdAt: ticket.createdAt,
+                replyDate: ticket.ticketDone,
                 description: ticket.ticketDesc,
-                status: ticket.ticketStatus,
-                deadline: ticket.ticketDeadline,
                 response: ticket.ticketResponse,
-                createdAt: ticket.createdAt
             }
-        });
+        };
+
+        res.status(200).json(responseData);
     } catch (error){
         return res.status(500).json({ message: error.message});
     }
@@ -168,7 +169,10 @@ export const getSpecificTicketClient = async (req, res) => {
 
         // Only include response if status is "finished"
         if (ticket.ticketStatus === "finished") {
-            responseData.ticketData.response = ticket.ticketResponse;
+            responseData.ticketData.response = {
+                reply: ticket.ticketResponse,
+                replyDate: ticket.ticketDone
+            }
         }
 
         res.status(200).json(responseData);
