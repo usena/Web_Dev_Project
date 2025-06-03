@@ -8,6 +8,7 @@ const Tickets = () => {
     const [category, setCategory] = useState('all');
     const [sort, setSort] = useState(null);
     const [inputSearch, setInputSearch] = useState("");
+    const [selectedTicket, setSelectedTicket] = useState(null);
 
     const categories = ['technical', 'complaints', 'inquiries', 'booking', 'refund', 'other'];
 
@@ -28,10 +29,12 @@ const Tickets = () => {
         return result;
     }, [tickets, inputSearch, sort]);
 
+    const url = `${import.meta.env.VITE_API_URL}/service/ticket`
+
     const fetchTickets = async (selectedCategory = category) => {
         setLoading(true);
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/service/ticket/get_all_tickets`, {
+            const response = await axios.get(`${url}/get_all_tickets`, {
                 params: {
                     filter: 'not-finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory
@@ -61,6 +64,16 @@ const Tickets = () => {
     };
 
     const handleSearch = useCallback(debounce(setInputSearch, 300), []);
+
+    const handleView = async (ticketId) => {
+        try {
+            const response = await axios.get(`${url}/get-ticket-client/${ticketId}`);
+            setSelectedTicket(response.data.ticketData);
+            document.getElementById("view-modal").showModal();
+        } catch (error) {
+            console.error("Fetch error:", error);
+        }
+    }
 
     return (
         <div className="p-4">
@@ -115,7 +128,7 @@ const Tickets = () => {
                         </thead>
                         <tbody>
                             {processedTickets.map(ticket => (
-                                <tr key={ticket._id}>
+                                <tr key={ticket._id} onClick={() => handleView(ticket._id)} className="hover:bg-gray-200" role="button" tabIndex={0}>
                                     <td>{ticket.ticketTitle}</td>
                                     <td>{new Date(ticket.createdAt).toLocaleDateString()}</td>
                                 </tr>
@@ -124,6 +137,18 @@ const Tickets = () => {
                     </table>
                 </div>
             )}
+
+            <dialog id="view-modal" className="modal">
+                <form method="dialog" className="modal-box max-w-2xl max-h-[80vh] overflow-y-auto">
+                    <h2 className="font-bold text-lg mb-4 text-center">{selectedTicket?.title}</h2>
+                    <p><strong>Category:</strong> {selectedTicket?.category}</p>
+                    <p><strong>Created At:</strong> {selectedTicket ? new Date(selectedTicket.createdAt).toLocaleString() : ''}</p>
+                    <p className="py-2">{selectedTicket?.description}</p>
+                    <div className="modal-action">
+                    <button className="btn bg-green-700 text-white hover:bg-green-800">Close</button>
+                    </div>
+                </form>
+            </dialog>
         </div>
     );
 };
