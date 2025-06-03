@@ -13,7 +13,9 @@ const app = express();
 dotenv.config();
 
 app.use(express.json());
-app.use(cors({credentials: true}));
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://help-desk-front-end-xi.vercel.app'],
+    credentials: true}));
 app.use(cookieParser());
 
 const PORT = process.env.PORT;
