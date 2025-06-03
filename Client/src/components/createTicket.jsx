@@ -52,43 +52,45 @@ const CreateTicket = () => {
     };
 
     return (
-        <>
-            <div className="p-4">           
-                <form className="flex flex-col gap-3 w-80" onSubmit={handleCreateTicket}>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="p-8 rounded-lg shadow-md w-full max-w-md">
+                <h1 className="text-2xl font-semibold text-green-800 mb-6 text-center">Create A Ticket</h1>
+                <form className="flex flex-col gap-4" onSubmit={handleCreateTicket}>
                     <input
                         type="text"
                         placeholder="Title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="border p-2 rounded-md"
+                        className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <select 
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="select select-bordered"
+                    <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="border border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
+                        <option value="">Select a category</option>
                         {categories.map(cat => (
                             <option key={cat} value={cat}>
                                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
                             </option>
                         ))}
                     </select>
-                    <input
-                        type="text"
+                    <textarea
+                        rows={5}
                         placeholder="Description"
                         value={desc}
                         onChange={(e) => setDesc(e.target.value)}
-                        className="border p-2 rounded-md"
+                        className="border border-gray-300 p-3 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition"
+                        className="bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition"
                     >
                         Submit
                     </button>
                 </form>
             </div>
-        </>
+        </div>
     );
 };
 

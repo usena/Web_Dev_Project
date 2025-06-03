@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Tickets from "./tickets";
 import Completed from "./completed";
+import CreateTicket from "../createTicket";
 import {
     UserCircle,
     LayoutDashboard,
@@ -22,6 +23,7 @@ const Sidebar = () => {
                     <div className="flex flex-col gap-3 flex-3/4 rounded-md p-4">
                         {activePage === "completed" && <Completed />}
                         {activePage === "dashboard" && <Tickets />}
+                        {activePage === "createTicket" && <CreateTicket />}
                     </div>
                 </div>
             </div>
@@ -36,6 +38,10 @@ const Sidebar = () => {
                     <li><button 
                         className={activePage === "dashboard" ? "active" : ""} 
                         onClick={() => setActivePage("dashboard")}>Dashboard
+                    </button></li>
+                    <li><button 
+                        className={activePage === "createTicket" ? "active" : ""} 
+                        onClick={() => setActivePage("createTicket")}>Create Ticket
                     </button></li>
                 </ul>
             </div>
