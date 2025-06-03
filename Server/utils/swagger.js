@@ -72,7 +72,7 @@ const swaggerSpec = swaggerJsDoc({
         },
         servers: [
             {
-                url: "http://localhost:5000/service/ticket",
+                url: "https://helpdesk-t21h.onrender.com/service/ticket",
                 description: 'Development - ticket'
             }
         ],

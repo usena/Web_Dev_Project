@@ -33,7 +33,7 @@ const Completed = () => {
     const fetchTickets = async (selectedCategory = category) => {
         setLoading(true);
         try {
-            const response = await axios.get('/service/ticket/get_all_tickets', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/service/ticket/get_all_tickets`, {
                 params: {
                     filter: 'finished',
                     category: selectedCategory === 'all' ? undefined : selectedCategory

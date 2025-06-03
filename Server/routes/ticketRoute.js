@@ -40,8 +40,6 @@ const router = express.Router()
  *         description: Requested resource is forbidden
  *       '400':
  *         description: Bad request
- *       '404':
- *         description: tickets not found
  *       '500':
  *         description: Internal server error
  */

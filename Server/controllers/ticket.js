@@ -5,7 +5,7 @@ export const createTicket = async (req, res) => {
     try {
         const { ticketTitle, ticketCategory, ticketDesc} = req.body
         if (!ticketTitle || !ticketCategory || !ticketDesc) {
-            return res.status(404).json({message: "Please fill the required fields!"})
+            return res.status(400).json({message: "Please fill the required fields!"})
         }
 
         const newTicket = await TicketModel.create({
