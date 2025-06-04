@@ -153,7 +153,8 @@ const Completed = () => {
                     {selectedTicket?.response && (
                         <div>
                             <h4 className="font-bold text-lg mb-4 mt-4 text-center">Reply</h4>
-                            <p className="py-2">{selectedTicket?.response}</p>
+                            <p><strong>Reply At:</strong> {selectedTicket.response.replyDate ? new Date(selectedTicket.response.replyDate).toLocaleString() : ''}</p>
+                            <p className="py-2">{selectedTicket.response.reply}</p>
                         </div>
                     )}
                     <div className="modal-action">

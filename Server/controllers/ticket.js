@@ -26,15 +26,21 @@ export const draftResponseStaff = async (req, res) => {
 
         const updateData = {};
 
-        if (ticketCategory !== undefined) {
+        const isValidField = (val) => {
+            if (val === undefined) return false;
+            if (typeof val === 'string') return val.trim() !== "";
+            return true;
+        };
+
+        if (isValidField(ticketCategory)) {
             updateData.ticketCategory = ticketCategory;
         }
 
-        if (ticketDeadline !== undefined) {
+        if (isValidField(ticketDeadline)) {
             updateData.ticketDeadline = ticketDeadline;
         }
 
-        if (ticketResponse !== undefined) {
+        if (isValidField(ticketResponse)) {
             updateData.ticketResponse = ticketResponse;
             updateData.ticketStatus = ticketResponse.trim() === "" ? "new" : "active";
         }
