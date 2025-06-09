@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './styles.css';
-import { useNavigate } from 'react-router-dom';
-import jwt_decode from 'jwt-decode';
+import './Styles.css';
+import {
+  fetchTicketById,
+  submitTicketResponse,
+  draftTicketResponse,
+} from '../api/ticket';
 
-export default function TaskCard() {
+export default function TaskCard({ ticketId }) {
   const [assignModal, setAssignModal] = useState(false);
   const [assignName, setAssignName] = useState('');
   const [assignID, setAssignID] = useState('');
@@ -12,35 +15,61 @@ export default function TaskCard() {
   const [addItemModal, setAddItemModal] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [commentModal, setCommentModal] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [senderInfoModal, setSenderInfoModal] = useState(false);
+  const [title, setTitle] = useState('');
 
-  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
+    const fetchUserInfo = async () => {
+      if (!token) return;
+      try {
+        const res = await fetch('http://localhost:5000/api/user/me', {
+          headers: {
+            'x-auth-token': token,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUserInfo(data);
+        } else {
+          console.error('Failed to fetch user info');
+        }
+      } catch (err) {
+        console.error('Error fetching user info:', err);
+      }
+    };
 
-    try {
-      const decoded = jwt_decode(token);
-      setUserInfo(decoded);
-    } catch (err) {
-      console.error('Invalid token');
-      navigate('/login');
-    }
-  }, [navigate]);
+    const fetchTicket = async () => {
+      if (!token || !ticketId) return;
+      try {
+        const data = await fetchTicketById(ticketId, token);
+        setTitle(data.title || '');
+        setChecklist(data.checklist || []);
+        setComments(data.comments || []);
+      } catch (err) {
+        console.error('Failed to load ticket', err);
+        showAlert('Failed to load ticket', 'red');
+      }
+    };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+    fetchUserInfo();
+    fetchTicket();
+  }, [ticketId, token]);
 
   const updateProgress = () => {
     const total = checklist.length;
     const completed = checklist.filter(item => item.checked).length;
     return total === 0 ? 0 : (completed / total) * 100;
+  };
+
+  const showAlert = (message, color) => {
+    setAlert({ message, color });
+    setTimeout(() => setAlert(null), 3000);
   };
 
   const handleAssignSubmit = () => {
@@ -68,23 +97,62 @@ export default function TaskCard() {
     setChecklist(updated);
   };
 
-  const showAlert = (message, color) => {
-    setAlert({ message, color });
-    setTimeout(() => setAlert(null), 3000);
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      setComments([...comments, newComment.trim()]);
+      setNewComment('');
+      setCommentModal(false);
+      showAlert('Comment added successfully!', 'green');
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!token || !ticketId) return;
+
+    if (checklist.length > 0 && checklist.every(item => item.checked)) {
+      try {
+        await submitTicketResponse(ticketId, { title, checklist, comments }, token);
+        showAlert('Task submitted successfully!', 'green');
+      } catch (err) {
+        console.error(err);
+        showAlert('Failed to submit task', 'red');
+      }
+    } else {
+      showAlert('Please complete all checklist items!', 'red');
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!token || !ticketId) return;
+    try {
+      await draftTicketResponse(ticketId, { title, checklist, comments }, token);
+      showAlert('Draft saved!', 'green');
+    } catch (err) {
+      console.error(err);
+      showAlert('Failed to save draft', 'red');
+    }
   };
 
   const allCompleted = checklist.length > 0 && checklist.every(item => item.checked);
 
   return (
     <div className="page">
-      {alert && (
-        <div className={`alert ${alert.color}`}>{alert.message}</div>
-      )}
+      {alert && <div className={`alert ${alert.color}`}>{alert.message}</div>}
 
       <div className="card">
         <div className="header">
-          <h2>{userInfo ? `Welcome, ${userInfo.username}` : 'Loading...'}</h2>
-          <button className="btn red" onClick={handleLogout}>Logout</button>
+          <button className="close-btn">&times;</button>
+        </div>
+
+        <div className="section">
+          <h3>Title</h3>
+          <input
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="Enter title"
+            className="title-input"
+          />
         </div>
 
         <div className="section">
@@ -108,15 +176,7 @@ export default function TaskCard() {
         )}
 
         <div className="section">
-          <h3>Description</h3>
-          <textarea placeholder="Add a more detailed description..."></textarea>
-        </div>
-
-        <div className="section">
-          <div className="section-header">
-            <h3>Checklist</h3>
-            <span className={`badge ${allCompleted ? 'green' : 'yellow'}`}>{allCompleted ? 'Complete' : 'In Progress'}</span>
-          </div>
+          <h3>Checklist</h3>
           <div className="progress-bar">
             <div className="progress" style={{ width: `${updateProgress()}%` }}></div>
           </div>
@@ -127,11 +187,7 @@ export default function TaskCard() {
             {checklist.map((item, index) => (
               hideCompleted && item.checked ? null : (
                 <li key={index} className="checklist-item">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => handleCheckboxChange(index)}
-                  />
+                  <input type="checkbox" checked={item.checked} onChange={() => handleCheckboxChange(index)} />
                   <span>{item.text}</span>
                 </li>
               )
@@ -144,7 +200,6 @@ export default function TaskCard() {
           <div className="modal-overlay">
             <div className="modal">
               <h2>Add Checklist Item</h2>
-              <label>Item Text</label>
               <input value={newItemText} onChange={e => setNewItemText(e.target.value)} placeholder="Enter item text" />
               <div className="modal-actions">
                 <button onClick={() => setAddItemModal(false)} className="btn gray">Cancel</button>
@@ -156,29 +211,70 @@ export default function TaskCard() {
 
         <div className="section">
           <h3>Notes</h3>
-          <textarea placeholder="Add a more detailed description..."></textarea>
+          <textarea placeholder="Add important notes..."></textarea>
         </div>
 
         <div className="section">
           <h3>Actions</h3>
           <ul className="actions">
-            <li>
-              <span>Add Comment</span>
+            <li onClick={() => setCommentModal(true)}>
+              <span>Send Comment</span>
               <i className="fas fa-arrow-right"></i>
             </li>
-            <li>
+            <li onClick={() => setSenderInfoModal(true)}>
               <span>View Sender Info</span>
               <i className="fas fa-info-circle"></i>
             </li>
           </ul>
-          <button onClick={() => {
-            if (allCompleted) {
-              showAlert('Task completed successfully!', 'green');
-            } else {
-              showAlert('Please complete all checklist items before finishing!', 'red');
-            }
-          }} className="btn green center">Finish</button>
+          <button onClick={handleSubmit} className="btn green center">Submit</button>
+          <button onClick={handleSaveDraft} className="btn yellow center">Save Draft</button>
         </div>
+
+        {senderInfoModal && userInfo && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>Sender Information</h2>
+              <div className="sender-info">
+                <p><strong>Name:</strong> {userInfo.name}</p>
+                <p><strong>Email:</strong> {userInfo.email}</p>
+                <p><strong>Account ID:</strong> {userInfo.accountId}</p>
+                <p><strong>Plan:</strong> {userInfo.plan}</p>
+                <p><strong>Status:</strong> {userInfo.status}</p>
+              </div>
+              <div className="modal-actions">
+                <button onClick={() => setSenderInfoModal(false)} className="btn blue">Close</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {comments.length > 0 && (
+          <div className="section">
+            <h3>Comments</h3>
+            <ul className="comment-list">
+              {comments.map((c, i) => (
+                <li key={i} className="comment-item">{c}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {commentModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>Send Comment</h2>
+              <textarea
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                placeholder="Enter your comment..."
+              />
+              <div className="modal-actions">
+                <button onClick={() => setCommentModal(false)} className="btn gray">Cancel</button>
+                <button onClick={handleAddComment} className="btn blue">Send</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
